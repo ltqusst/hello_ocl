@@ -12,9 +12,35 @@ __kernel void myAdd(const int M, const int N, const int K,
     // Store the result
     C[globalCol*M + globalRow] = A[globalCol*M + globalRow] + B[globalCol*M + globalRow];
 }
+
+
 /********************************************************
  column-wised storing of matrix
+ 
+ cache line: 
+  |   @: cache hit
+  V   ?: cache miss
+                            N
+             [B]--------+--------------+
+             |          |@             |
+            K|          |@             |
+             |          |@             |
+      K      +----------+--------------+ 
+  [A]-----+  [C]-----------------------+
+  |       |  |          .              |
+  |       |  |          .              |
+  |       |  |          .              |
+ M|       |  |          .              |
+  +-------+  |  ........Xi             |
+  |@@@@@@@|  |          Xi+1@          |
+  |@@@@@@@|  |          Xi+2@          |
+  |       |  |          .              | 
+  +-------+  +-------------------------+
+ 
 ********************************************************/
+
+
+
 // First naive implementation
 __kernel void myGEMM1(const int M, const int N, const int K,
                       const __global float* A,
@@ -36,13 +62,38 @@ __kernel void myGEMM1(const int M, const int N, const int K,
 }
 
 
+
+
+
+
 /********************************************************
  myGEMM1b is much slower than myGEMM1
  because the way OpenCL dispatch work-items:
    
      within a work-group, items are executed dimension by dimension, 
      first along dim0, then dim1 and dim2.
-   
+     
+ cache line: 
+  |   @: cache hit
+  V   ?: cache miss
+                          N
+             [B]--------+--------------+
+             |          | @    @       |
+            K|          | @    @       |
+             |          | @    @       |
+      K      +----------+--------------+ 
+  [A]-----+  [C]-----------------------+
+  |       |  |          .              |
+  |       |  |          .              |
+  |       |  |          .              |
+ M|       |  |          .              |
+  +-------+  |  ........Xi Xi+1 Xi+2...|
+  |???????|  |          ?  ?    ?      |
+  |       |  |                         |
+  |       |  |                         | 
+  +-------+  +-------------------------+
+
+
  so  in ver1 A&C both cached-hitted throughout adjacent work-items
  but in ver1b, only B is cached-hitted throughout adjacent work-items   
 ********************************************************/
@@ -64,6 +115,9 @@ __kernel void myGEMM1b(const int M, const int N, const int K,
     // Store the result
     C[globalCol*M + globalRow] = acc;
 }
+
+
+
 
 
 
