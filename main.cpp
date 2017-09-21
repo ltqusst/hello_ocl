@@ -5,11 +5,16 @@
 
 void run_hello(cl_platform_id platform_id);
 void run_myGEMM(cl_platform_id platform_id, const char * kernel_filename);
+void run_myNV12toBGR24(cl_platform_id platform_id, const char * kernel_filename);
 
 int main(int argc, char * argv[])
 {
 	int cnt, i;
 	cl_platform_id platform_id = NULL;
+    //setenv("OCL_OUTPUT_ASM","1",1);
+    //setenv("OCL_OUTPUT_BUILD_LOG","1",1);
+
+
 	/* select platform or just show all of them*/
 	if(argc > 1) {
 		i = atoi(argv[1]);
@@ -28,8 +33,9 @@ int main(int argc, char * argv[])
 	}
 
 	run_hello(platform_id);
+	//run_myGEMM(platform_id, argc > 2?argv[2]:"myGEMM1");
 
-	run_myGEMM(platform_id, argc > 2?argv[2]:"myGEMM1");
+	run_myNV12toBGR24(platform_id, argc > 2?argv[2]:"v1");
 
     return 0;
 }

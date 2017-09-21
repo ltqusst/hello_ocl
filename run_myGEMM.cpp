@@ -67,6 +67,8 @@ void run_myGEMM(cl_platform_id platform_id, const char * kernel_filename)
 
     if(clutl_build_program(context, device_id,	cl_filename, &program))
     	fprintf(stderr,"clutl_build_program error\n"),exit(1);
+    //setenv("OCL_OUTPUT_ASM","1",0);
+    //setenv("OCL_OUTPUT_BUILD_LOG","1",0);
 
     // Prepare OpenCL memory objects
     cl_mem bufA = clCreateBuffer(context, CL_MEM_READ_ONLY,  M*K*sizeof(float), NULL, NULL);

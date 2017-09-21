@@ -42,4 +42,36 @@ int matcmp(float *A, float *B, int M, int N);
 double gettime_sec(void);
 int clutl_check_err(cl_int ret);
 
+#ifdef __cplusplus
+
+#include <map>
+
+template<typename K>
+class Dtimer{
+public:
+	void go(void){
+		tims.clear();
+		start = gettime_sec();
+	}
+
+	double stop(K key){
+		double tim =  gettime_sec() - start;
+		tims.insert(std::pair<K, double>(key, tim));
+		return tim;
+	}
+
+	double get(K key){
+		return tims[key];
+	}
+	double operator[](K key){
+		return tims[key];
+	}
+
+	double start;
+	std::map<K, double> tims;
+};
+
+#endif
+
+
 #endif /* UTILS_H_ */

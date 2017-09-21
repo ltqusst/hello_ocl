@@ -32,7 +32,6 @@ int load_bin(const char *filename, void * data, int size)
 	int ret = 0;
 	FILE *fp = fopen(filename, "rb");
 	if(fp == NULL) return 0;
-
 	ret = fread(data, 1, size, fp);
 	fclose(fp);
 	return ret;
@@ -42,7 +41,6 @@ int save_bin(const char *filename, void * data, int size)
 	int ret = 0;
 	FILE *fp = fopen(filename, "wb");
 	if(fp == NULL) return 0;
-
 	ret = fwrite(data, 1, size, fp);
 	fclose(fp);
 	return ret;
